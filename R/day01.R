@@ -58,31 +58,86 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' Your calculation isn\'t quite right. It looks like some of the digits
+#' are actually *spelled out with letters*: `one`, `two`, `three`, `four`,
+#' `five`, `six`, `seven`, `eight`, and `nine` *also* count as valid
+#' \"digits\".
 #'
-#' *(Try using `convert_clipboard_html_to_roxygen_md()`)*
+#' Equipped with this new information, you now need to find the real first
+#' and last digit on each line. For example:
+#'
+#'     two1nine
+#'     eightwothree
+#'     abcone2threexyz
+#'     xtwone3four
+#'     4nineeightseven2
+#'     zoneight234
+#'     7pqrstsixteen
+#'
+#' In this example, the calibration values are `29`, `83`, `13`, `24`,
+#' `42`, `14`, and `76`. Adding these together produces *`281`*.
+#'
+#' *What is the sum of all of the calibration values?*
 #'
 #' @param x some data
-#' @return For Part One, `f01a(x)` returns .... For Part Two,
-#'   `f01b(x)` returns ....
+#' @return For Part One, `f01a_sum_hidden_numbers(x)` returns the sum of the
+#'   hidden numbers. For Part Two, `f01b_decode_and_sum_hidden_numbers(x)`
+#'   returns the sum of the hidden numbers.
 #' @export
 #' @examples
-#' f01a(example_data_01())
-#' f01b()
-f01a <- function(x) {
-
+#' f01a_sum_hidden_numbers(example_data_01())
+#' f01b_decode_and_sum_hidden_numbers(example_data_01(2))
+f01a_sum_hidden_numbers <- function(x) {
+  x |> f01_helper() |> sum()
 }
 
 
 #' @rdname day01
 #' @export
-f01b <- function(x) {
-
+f01b_decode_and_sum_hidden_numbers <- function(x) {
+  x |> f01_helper2() |> sum()
 }
 
 
-f01_helper <- function(x) {
+f01_helper <- function(x, fix_words = FALSE) {
+  x |>
+    chr_replace("\\D", "") |>
+    # repeat any single digit
+    chr_replace("(^\\d$)", "\\1\\1") |>
+    chr_replace("(^\\d).+(\\d$)", "\\1\\2") |>
+    as.numeric()
+}
 
+
+f01_helper2 <- function(x) {
+  # Find the first and last digits separately by
+  # working on reversed strings
+  plan <- c(
+    one = 1, two = 2, three = 3,
+    four = 4, five = 5, six = 6,
+    seven = 7, eight = 8, nine = 9
+  )
+  rev_plan <- plan
+  names(rev_plan) <- chr_reverse(names(plan))
+  regex <- paste0("(", paste0(names(plan), collapse = "|"), ")")
+  rev_regex <- paste0("(", paste0(names(rev_plan), collapse = "|"), ")")
+
+  first <- x |>
+    # put underscores in to prevent "twone" collision
+    chr_replace(regex, "_\\1_") |>
+    chr_replace_many(plan) |>
+    chr_replace("\\D", "") |>
+    substr(1, 1)
+
+  last <- x |>
+    chr_reverse() |>
+    chr_replace(rev_regex, "_\\1_") |>
+    chr_replace_many(rev_plan) |>
+    chr_replace("\\D", "") |>
+    substr(1, 1)
+
+  paste0(first, last) |>
+    as.numeric()
 }
 
 
@@ -93,8 +148,19 @@ f01_helper <- function(x) {
 example_data_01 <- function(example = 1) {
   l <- list(
     a = c(
-
-
+      "1abc2",
+      "pqr3stu8vwx",
+      "a1b2c3d4e5f",
+      "treb7uchet"
+    ),
+    b = c(
+      "two1nine",
+      "eightwothree",
+      "abcone2threexyz",
+      "xtwone3four",
+      "4nineeightseven2",
+      "zoneight234",
+      "7pqrstsixteen"
     )
   )
   l[[example]]

@@ -2,14 +2,14 @@
 % Please edit documentation in R/day01.R
 \name{day01}
 \alias{day01}
-\alias{f01a}
-\alias{f01b}
+\alias{f01a_sum_hidden_numbers}
+\alias{f01b_decode_and_sum_hidden_numbers}
 \alias{example_data_01}
 \title{Day 01: Trebuchet?!}
 \usage{
-f01a(x)
+f01a_sum_hidden_numbers(x)
 
-f01b(x)
+f01b_decode_and_sum_hidden_numbers(x)
 
 example_data_01(example = 1)
 }
@@ -20,8 +20,9 @@ example_data_01(example = 1)
 1.}
 }
 \value{
-For Part One, \code{f01a(x)} returns .... For Part Two,
-\code{f01b(x)} returns ....
+For Part One, \code{f01a_sum_hidden_numbers(x)} returns the sum of the
+hidden numbers. For Part Two, \code{f01b_decode_and_sum_hidden_numbers(x)}
+returns the sum of the hidden numbers.
 }
 \description{
 \href{https://adventofcode.com/2023/day/1}{Trebuchet?!}
@@ -80,11 +81,29 @@ the calibration values?}
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+Your calculation isn\'t quite right. It looks like some of the digits
+are actually \emph{spelled out with letters}: \code{one}, \code{two}, \code{three}, \code{four},
+\code{five}, \code{six}, \code{seven}, \code{eight}, and \code{nine} \emph{also} count as valid
+\"digits\".
 
-\emph{(Try using \code{convert_clipboard_html_to_roxygen_md()})}
+Equipped with this new information, you now need to find the real first
+and last digit on each line. For example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen
+}\if{html}{\out{</div>}}
+
+In this example, the calibration values are \code{29}, \code{83}, \code{13}, \code{24},
+\code{42}, \code{14}, and \code{76}. Adding these together produces \emph{\code{281}}.
+
+\emph{What is the sum of all of the calibration values?}
 }
 \examples{
-f01a(example_data_01())
-f01b()
+f01a_sum_hidden_numbers(example_data_01())
+f01b_decode_and_sum_hidden_numbers(example_data_01(2))
 }
