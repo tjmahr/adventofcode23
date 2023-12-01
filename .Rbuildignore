@@ -1,0 +1,7 @@
+^renv$
+^renv\.lock$
+^LICENSE\.md$
+^adventofcode23\.Rproj$
+^\.Rproj\.user$
+^\.aoccookie$
+^README\.Rmd$
