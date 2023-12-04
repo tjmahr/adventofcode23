@@ -2,5 +2,8 @@
 
 export(aoc_solutions)
 export(example_data_01)
+export(example_data_02)
 export(f01a_sum_hidden_numbers)
 export(f01b_decode_and_sum_hidden_numbers)
+export(f02a_sum_valid_game_ids)
+export(f02b)

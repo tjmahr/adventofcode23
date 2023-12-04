@@ -3,8 +3,8 @@
 aoc_solutions <- list(
   day01a = 54708,
   day01b = 54087,
-  day02a = NA,
-  day02b = NA,
+  day02a = 2683,
+  day02b = 49710,
   day03a = NA,
   day03b = NA,
   day04a = NA,
@@ -55,9 +55,9 @@ aoc_solutions <- list(
 
 aoc_notes <- list(
   day01a = "regex",
-  day01b = "regex. reading from left and right of string",
-  day02a = NA,
-  day02b = NA,
+  day01b = "regex; reading from left and right of string",
+  day02a = "regex; higher order functions",
+  day02b = "higher order functions",
   day03a = NA,
   day03b = NA,
   day04a = NA,

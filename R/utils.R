@@ -19,3 +19,30 @@ chr_reverse <- function(x) {
     lapply(paste0, collapse = "") |>
     unlist()
 }
+
+
+chr_extract <- function(x, pattern, ...) {
+  matches <- regexpr(pattern, x)
+  r <- regmatches(x, matches)
+  x[which(matches > 0)] <- r
+  x[which(matches < 0)] <- NA_character_
+  x
+}
+
+
+vec_replace_na <- function(xs, replacement) {
+  xs[is.na(xs)] <- replacement
+  xs
+}
+
+list_map2 <- function(xs, ys, f, ...) {
+  Map(f, xs, ys, ...)
+}
+
+list_filter <- function(xs, f) {
+  Filter(f, xs)
+}
+
+list_invoke <- function(args, what, ...) {
+  do.call(what, args, ...)
+}
