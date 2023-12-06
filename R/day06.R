@@ -176,8 +176,8 @@ f06_helper <- function(x) {
     strsplit("\\s+") |>
     lapply(vec_index, -1) |>
     lapply(as.numeric) |>
-    as.data.frame()
-  names(df) <- c("time", "distance")
+    as.data.frame() |>
+    vec_set_names(c("time", "distance"))
   df
 }
 

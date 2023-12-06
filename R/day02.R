@@ -137,7 +137,7 @@ f02b_sum_game_powers <- function(x) {
     # double lapply to target columns of dfs in each list
     lapply(lapply, max) |>
     lapply(unlist) |>
-    lapply(function(x) x[-4]) |>
+    lapply(vec_index, -4) |>
     lapply(prod) |>
     unlist() |>
     sum()
@@ -154,7 +154,7 @@ f02_helper <- function(x) {
     ) |>
       lapply(chr_extract, "\\d+") |>
       lapply(vec_replace_na, 0) |>
-      lapply(as.numeric, 0) |>
+      lapply(as.numeric) |>
       as.data.frame()
   }
 

@@ -258,12 +258,12 @@ f05b_find_lowest_location <- function(x) {
     which.min()
 
   sample_w_lowest_outcome <- outcomes |>
-    getElement(batch_w_lowest_outcome) |>
+    vec_element(batch_w_lowest_outcome) |>
     which.min()
 
   sample_start <- batches |>
-    getElement(batch_w_lowest_outcome) |>
-    getElement(sample_w_lowest_outcome)
+    vec_element(batch_w_lowest_outcome) |>
+    vec_element(sample_w_lowest_outcome)
 
   # and then check all values around that sample
   values_to_check <- seq(
@@ -306,7 +306,7 @@ f05_helper <- function(x) {
   section_ends <- c(which(x == "") - 1, length(x))
 
   sections <- list_map2(section_starts, section_ends, seq) |>
-    lapply(function(i) x[i])
+    lapply(vec_index_into, x)
 
   section_data <- sections[-1] |>
     lapply(function(x) {

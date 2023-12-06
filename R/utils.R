@@ -50,7 +50,15 @@ list_invoke <- function(args, what, ...) {
   do.call(what, args, ...)
 }
 
+vec_element <- function(xs, i) {
+  xs[[i]]
+}
+
 vec_index <- function(xs, i) {
+  xs[i]
+}
+
+vec_index_into <- function(i, xs) {
   xs[i]
 }
 
@@ -61,4 +69,9 @@ vec_replace_na <- function(xs, replacement) {
 
 vec_remove_na <- function(xs) {
   xs[!is.na(xs)]
+}
+
+vec_set_names <- function(xs, ns) {
+  names(xs) <- ns
+  xs
 }
