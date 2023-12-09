@@ -1,4 +1,11 @@
 
+
+chr_match_matrix <- function(x, pattern) {
+  m <- regexec(pattern, x)
+  r <- regmatches(x, m)
+  lapply(r, matrix, nrow = 1)
+}
+
 chr_replace <- function(x, pattern, replacement, ...) {
   gsub(pattern = pattern, x = x, replacement = replacement, ...)
 }
@@ -62,6 +69,42 @@ vec_index_into <- function(i, xs) {
   xs[i]
 }
 
+
+mod1 <- function(xs, m) {
+  r <- xs %% m
+  ifelse(r == 0, m, r)
+}
+
+
+vec_tail <- function(xs, n = 6) {
+  n <- min(c(length(xs), n))
+  if (n < 0) n <- length(xs) + n
+  xs[seq(to = length(xs), length.out = n)]
+}
+
+vec_last <- function(xs) {
+  vec_tail(xs, 1)
+}
+
+vec_head <- function(xs, n = 6) {
+  n <- min(c(length(xs), n))
+  if (n < 0) n <- length(xs) + n
+  xs[seq(from = 1, length.out = n)]
+}
+
+vec_but_tail <- function(xs, n) {
+  vec_head(xs, -n)
+}
+
+
+
+vec_wrapped_index_into <- function(i, xs) {
+  i |>
+    mod1(length(xs)) |>
+    vec_index_into(xs)
+}
+
+
 vec_replace_na <- function(xs, replacement) {
   xs[is.na(xs)] <- replacement
   xs
@@ -74,4 +117,14 @@ vec_remove_na <- function(xs) {
 vec_set_names <- function(xs, ns) {
   names(xs) <- ns
   xs
+}
+
+mat_set_rownames <- function(x, value) {
+  rownames(x) <- value
+  x
+}
+
+mat_set_colnames <- function(x, value) {
+  colnames(x) <- value
+  x
 }
