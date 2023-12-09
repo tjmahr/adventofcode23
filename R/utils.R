@@ -45,12 +45,21 @@ df_add_rowid <- function(df, name) {
   df_add_column(df, seq_len(nrow(df)), name)
 }
 
+
+list_lapply <- function(x, fun, ...) {
+  x |> lapply(function(y) lapply(y, fun, ...))
+}
+
 list_map2 <- function(xs, ys, f, ...) {
   Map(f, xs, ys, ...)
 }
 
 list_filter <- function(xs, f) {
   Filter(f, xs)
+}
+
+list_compact <- function(xs) {
+  list_filter(xs, Negate(is.null))
 }
 
 list_invoke <- function(args, what, ...) {
