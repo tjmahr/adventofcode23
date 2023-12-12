@@ -136,9 +136,43 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' As you look out at the field of springs, you feel like there are way
+#' more springs than the condition records list. When you examine the
+#' records, you discover that they were actually *folded up* this whole
+#' time!
 #'
-#' *(Try using `convert_clipboard_html_to_roxygen_md()`)*
+#' To *unfold the records*, on each row, replace the list of spring
+#' conditions with five copies of itself (separated by `?`) and replace the
+#' list of contiguous groups of damaged springs with five copies of itself
+#' (separated by `,`).
+#'
+#' So, this row:
+#'
+#'     .# 1
+#'
+#' Would become:
+#'
+#'     .#?.#?.#?.#?.# 1,1,1,1,1
+#'
+#' The first line of the above example would become:
+#'
+#'     ???.###????.###????.###????.###????.### 1,1,3,1,1,3,1,1,3,1,1,3,1,1,3
+#'
+#' In the above example, after unfolding, the number of possible
+#' arrangements for some rows is now much larger:
+#'
+#' -   `???.### 1,1,3` - *`1`* arrangement
+#' -   `.??..??...?##. 1,1,3` - *`16384`* arrangements
+#' -   `?#?#?#?#?#?#?#? 1,3,1,6` - *`1`* arrangement
+#' -   `????.#...#... 4,1,1` - *`16`* arrangements
+#' -   `????.######..#####. 1,6,5` - *`2500`* arrangements
+#' -   `?###???????? 3,2,1` - *`506250`* arrangements
+#'
+#' After unfolding, adding all of the possible arrangement counts together
+#' produces *`525152`*.
+#'
+#' Unfold your condition records; *what is the new sum of possible
+#' arrangement counts?*
 #'
 #' @param x some data
 #' @return For Part One, `f12a_count_completions(x)` returns .... For Part Two,
@@ -169,8 +203,6 @@ f12a_count_completions <- function(x) {
     )
   }
 
-
-
   x |>
     f12_helper() |>
     lapply(solve_brute_force) |>
@@ -182,7 +214,13 @@ f12a_count_completions <- function(x) {
 #' @rdname day12
 #' @export
 f12b <- function(x) {
-  solve_brute_force <- function(data) {
+  # The puzzle adds an extra `?` between each fold. So the cases are
+  # 1. Set ? to .
+  #    [line].[line] with A * A possible solutions
+  # 2. Set ? to #
+  #    [line#][line] and need to test A possible cases on right
+  #    [line][#line] and need to test A possible cases on left
+  solve_brute_force <- function(data, size = 5) {
     try_completion <- function(i, chars, target_seq) {
       chars[i] <- "#"
       chars[chars == "?"] <- "."
@@ -198,10 +236,13 @@ f12b <- function(x) {
       }
     }
 
-    solve_brute_force_from_result <- function(result, data) {
-      new_data <- result |>
-        # these completions add an extra `?`
-        paste0("?", data$line) |>
+    solve_case_from_result <- function(result, data, direction) {
+      if (direction == "left") {
+        new_line <- paste0(data$line, "#", result)
+      } else {
+        new_line <- paste0(result, "#", data$line)
+      }
+      new_data <- new_line |>
         paste0(" ", data$record, ",", data$record) |>
         f12_helper() |>
         vec_element(1)
@@ -211,64 +252,56 @@ f12b <- function(x) {
         new_data$hash_missing,
         simplify = FALSE
       ) |>
-        # only want to check completion that include the new `?`
-        list_filter(function(x) is.element(1, x - length(data$chars))) |>
         lapply(
           try_completion,
           chars = new_data$chars,
           target_seq = new_data$hash_seq
         )
-
     }
 
     chars <- data$chars
     target_seq <- data$hash_seq
 
-    slots_used <- utils::combn(
+    initial_solve <- utils::combn(
       data$free_slots,
       data$hash_missing,
       simplify = FALSE
-    )
-
-    results <- slots_used |>
+    ) |>
       lapply(try_completion, chars = data$chars, target_seq = data$hash_seq) |>
-      list_filter(length)
+      list_filter(length) |>
+      unlist()
 
-    l <- results |>
+    l <- initial_solve |>
       unlist() |>
-      lapply(solve_brute_force_from_result, data = data) |>
-      unlist(recursive = FALSE) |>
-      list_filter(length)
-    len_1 <- length(results)
-    len_2 <- length(l) + len_1
-    len_1 * len_2 * len_2 * len_2
-    l
-    b <- sum(l + length(results))
-    b
-    safe_results
+      lapply(solve_case_from_result, data = data, direction = "left") |>
+      lapply(list_filter, length)
 
-    results
+    r <- initial_solve |>
+      unlist() |>
+      lapply(solve_case_from_result, data = data, direction = "right") |>
+      lapply(list_filter, length)
+
+    lengths(l)
+
+    x <- rep(length(initial_solve), size)
+    l0 <- c(rep(lengths(l)[1], size - 1), 0)
+    lr <- c(0, rep(lengths(r)[1], size - 1))
+    prod(x + l0 + lr)
   }
 
+  # x <- readLines("./inst/input12.txt")
+  # x <- x |> f12_helper()
+  # data <- x[[6]]
+
+  # This solves the examples but I don't think the examples
+  # have enough "#"-final examples
   x <- example_data_12()
-  data <- x |>
+  try <- x |>
     f12_helper() |>
-    getElement(2)
-    lapply(solve_brute_force) |>
+    lapply(solve_brute_force, 5) |>
     lapply(sum) |>
     unlist()
-  partial2 <- paste0("?", x) |>
-    f12_helper() |>
-    lapply(solve_brute_force) |>
-    lapply(sum) |>
-    unlist()
-
-
-  4**5
-  choose(5, 4)
-
-  ?combn
-
+  try
 }
 
 
