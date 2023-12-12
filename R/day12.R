@@ -169,6 +169,8 @@ f12a_count_completions <- function(x) {
     )
   }
 
+
+
   x |>
     f12_helper() |>
     lapply(solve_brute_force) |>
@@ -181,8 +183,6 @@ f12a_count_completions <- function(x) {
 #' @export
 f12b <- function(x) {
   solve_brute_force <- function(data) {
-    chars <- data$chars
-    target_seq <- data$hash_seq
     try_completion <- function(i, chars, target_seq) {
       chars[i] <- "#"
       chars[chars == "?"] <- "."
@@ -197,14 +197,57 @@ f12b <- function(x) {
         character(0)
       }
     }
-    utils::combn(
+
+    solve_brute_force_from_result <- function(result, data) {
+      new_data <- result |>
+        # these completions add an extra `?`
+        paste0("?", data$line) |>
+        paste0(" ", data$record, ",", data$record) |>
+        f12_helper() |>
+        vec_element(1)
+
+      utils::combn(
+        new_data$free_slots,
+        new_data$hash_missing,
+        simplify = FALSE
+      ) |>
+        # only want to check completion that include the new `?`
+        list_filter(function(x) is.element(1, x - length(data$chars))) |>
+        lapply(
+          try_completion,
+          chars = new_data$chars,
+          target_seq = new_data$hash_seq
+        )
+
+    }
+
+    chars <- data$chars
+    target_seq <- data$hash_seq
+
+    slots_used <- utils::combn(
       data$free_slots,
       data$hash_missing,
-      FUN = try_completion,
-      chars = data$chars,
-      target_seq = data$hash_seq,
       simplify = FALSE
     )
+
+    results <- slots_used |>
+      lapply(try_completion, chars = data$chars, target_seq = data$hash_seq) |>
+      list_filter(length)
+
+    l <- results |>
+      unlist() |>
+      lapply(solve_brute_force_from_result, data = data) |>
+      unlist(recursive = FALSE) |>
+      list_filter(length)
+    len_1 <- length(results)
+    len_2 <- length(l) + len_1
+    len_1 * len_2 * len_2 * len_2
+    l
+    b <- sum(l + length(results))
+    b
+    safe_results
+
+    results
   }
 
   x <- example_data_12()
