@@ -78,6 +78,16 @@ vec_index_into <- function(i, xs) {
   xs[i]
 }
 
+vec_which_value <- function(xs, value) {
+  which(xs == value)
+}
+
+vec_run_lengths_of_value <- function(xs, value) {
+  r <- rle(xs)
+  r$values |>
+    vec_which_value(value) |>
+    vec_index_into(r$lengths)
+}
 
 mod1 <- function(xs, m) {
   r <- xs %% m
